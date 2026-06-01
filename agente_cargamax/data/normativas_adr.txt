@@ -1,0 +1,38 @@
+NORMATIVAS DE TRANSPORTE DE CARGA PELIGROSA - CARGAMAX SUR LTDA.
+
+MARCO REGULATORIO
+CargaMax Sur Ltda. opera bajo las regulaciones del Ministerio de Transportes y Telecomunicaciones de Chile y las normativas ADR (Acuerdo Europeo relativo al Transporte Internacional de Mercancías Peligrosas por Carretera), adoptadas como referencia técnica para la clasificación, embalaje y etiquetado de cargas peligrosas.
+
+CLASIFICACIÓN DE CARGAS PELIGROSAS ACEPTADAS (LIMITADO)
+La empresa transporta únicamente las siguientes clases, previa evaluación técnica:
+- Clase 3: Líquidos inflamables (pinturas, solventes, resinas no tóxicas).
+- Clase 8: Sustancias corrosivas (ácidos y bases industriales diluidas, previa aprobación).
+- Clase 9: Sustancias y objetos misceláneos peligrosos (baterías de litio, aerosoles no inflamables).
+
+CLASES PROHIBIDAS (SIN EXCEPCIÓN)
+- Clase 1: Explosivos.
+- Clase 2.3: Gases tóxicos.
+- Clase 6.1: Sustancias tóxicas.
+- Clase 6.2: Sustancias infecciosas.
+- Clase 7: Material radiactivo.
+
+REQUISITOS DOCUMENTALES ESPECIALES
+1. Hoja de Datos de Seguridad (SDS/MSDS) vigente y firmada por el proveedor químico.
+2. Declaración jurada del remitente indicando clase ADR, número ONU, grupo de embalaje y cantidad neta.
+3. Etiquetado de la caja/unidad de transporte conforme a los símbolos ADR correspondientes.
+4. Certificado de aptitud del vehículo para transporte de mercancías peligrosas, emitido por planta de revisión técnica autorizada.
+5. Licencia de conducir clase F o su equivalente vigente para el conductor asignado.
+
+PROTOCOLO DE RECHAZO
+Si un cliente solicita transportar mercancías peligrosas y no cumple con alguno de los requisitos documentales o pertenece a una clase prohibida, CargaMax Sur Ltda. debe:
+1. Rechazar formalmente la solicitud mediante correo electrónico al cliente.
+2. Informar las razones técnicas y normativas del rechazo.
+3. Escalar al ejecutivo de cuentas si el cliente insiste o requiere alternativas logísticas.
+4. Bajo ninguna circunstancia se debe aceptar carga peligrosa sin la documentación completa, independientemente de la urgencia o relación comercial.
+
+EMERGENCIAS Y RESPUESTA
+Todo incidente durante el transporte de carga peligrosa debe reportarse inmediatamente al centro de coordinación de CargaMax Sur y a las autoridades competentes (CONAF, Bomberos, Carabineros) según corresponda. El conductor debe disponer de plan de emergencia en cabina y equipos de protección personal básicos.
+
+RESTRICCIONES DE RUTA
+El transporte de carga peligrosa clase 3 y 8 está restringido en horario diurno (06:00 - 22:00) en zonas urbanas densamente pobladas según plan regulador de cada comuna. Se debe solicitar permiso municipal con 72 horas de anticipación para tránsito por zonas restringidas.
+

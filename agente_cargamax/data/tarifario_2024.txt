@@ -1,0 +1,45 @@
+TARIFARIO BASE CARGAMAX SUR LTDA. - VIGENTE 2024
+
+Ruta: Santiago - Concepción
+Tipo de carga: General (no peligrosa)
+Peso máximo por unidad: 24 toneladas
+Tarifa por tonelada: $18.500 CLP
+Tiempo estimado de tránsito: 6 a 8 horas
+Frecuencia: Diaria (Lunes a Sábado)
+Observaciones: Tarifa sujeta a disponibilidad de flota. No incluye seguro de carga adicional.
+
+Ruta: Santiago - Valparaíso
+Tipo de carga: General y contenedores
+Peso máximo por unidad: 30 toneladas
+Tarifa por tonelada: $12.000 CLP
+Tiempo estimado de tránsito: 1.5 a 2.5 horas
+Frecuencia: Diaria (Lunes a Domingo)
+Observaciones: Servicio express disponible con recargo del 25%. Tarifa no vinculante hasta confirmación formal.
+
+Ruta: Santiago - Puerto Montt
+Tipo de carga: General y refrigerada
+Peso máximo por unidad: 24 toneladas
+Tarifa por tonelada: $45.000 CLP
+Tiempo estimado de tránsito: 18 a 22 horas
+Frecuencia: Lunes, Miércoles, Viernes
+Observaciones: Obligatorio aviso con 48 horas de anticipación. Carga refrigerada requiere validación técnica previa.
+
+Ruta: Concepción - Temuco
+Tipo de carga: General
+Peso máximo por unidad: 24 toneladas
+Tarifa por tonelada: $22.000 CLP
+Tiempo estimado de tránsito: 4 a 5 horas
+Frecuencia: Lunes a Viernes
+Observaciones: Ruta con restricciones por mantenimiento camino longitudinal en horario nocturno (22:00 - 06:00).
+
+SERVICIOS ADICIONALES
+Seguro de carga: 1.2% sobre valor declarado. Mínimo $25.000 CLP por envío.
+Servicio de descarga con grúa: $85.000 CLP por hora o fracción.
+Almacenaje en bodega propia (Santiago): $3.500 CLP por tonelada/día.
+
+CONDICIONES GENERALES
+Todas las tarifas son referenciales y no constituyen cotizaciones vinculantes.
+Las tarifas pueden variar según disponibilidad de equipos, combustible y peajes.
+Para cotizaciones formalizadas, contactar al ejecutivo de cuenta asignado.
+CargaMax Sur Ltda. se reserva el derecho de rechazar cargas que no cumplan normativas vigentes.
+
