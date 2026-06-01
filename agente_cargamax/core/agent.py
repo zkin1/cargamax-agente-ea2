@@ -1,5 +1,6 @@
 import json
 import os
+import groq
 from typing import Dict, Optional
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -44,90 +45,105 @@ class AgenteCargaMax:
         if self.modo_simulacion:
             return self._procesar_modo_simulacion(consulta)
         
-        # 1. Recuperar contexto de memoria a largo plazo
-        contexto_memoria = self.memoria_largo.obtener_contexto_texto(
-            consulta, self.cliente_id
-        )
-        
-        # 2. Razonar: clasificar intención y decidir acción
-        decision = razonador_tool.clasificar_y_decidir(consulta, contexto_memoria)
-        
-        # 3. Si requiere escalamiento, preparar respuesta de escalamiento
-        if decision.get("requiere_escalamiento", False):
-            respuesta_escalamiento = self._generar_respuesta_escalamiento(decision)
-            self._guardar_interaccion(consulta, respuesta_escalamiento)
+        try:
+            # 1. Recuperar contexto de memoria a largo plazo
+            contexto_memoria = self.memoria_largo.obtener_contexto_texto(
+                consulta, self.cliente_id
+            )
+            
+            # 2. Razonar: clasificar intención y decidir acción
+            decision = razonador_tool.clasificar_y_decidir(consulta, contexto_memoria)
+            
+            # 3. Si requiere escalamiento, preparar respuesta de escalamiento
+            if decision.get("requiere_escalamiento", False):
+                respuesta_escalamiento = self._generar_respuesta_escalamiento(decision)
+                self._guardar_interaccion(consulta, respuesta_escalamiento)
+                return {
+                    "respuesta_final": respuesta_escalamiento,
+                    "accion": "escalar",
+                    "metadata": {
+                        "decision": decision,
+                        "pasos_ejecutados": ["clasificacion", "escalamiento"],
+                        "fuentes": []
+                    }
+                }
+            
+            # 4. Planificar tareas
+            plan = self.planificador.generar_plan(
+                consulta,
+                decision.get("intencion", "otro"),
+                contexto_memoria
+            )
+            
+            # 5. Ejecutar plan paso a paso
+            resultados_pasos = []
+            informacion_acumulada = ""
+            
+            for paso in plan:
+                tool = paso.get("tool", "")
+                accion = paso.get("accion", "")
+                
+                if tool == "consultar_documentos":
+                    resultado = consultar_documentos(accion)
+                    informacion_acumulada += f"\n{resultado}"
+                    resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": resultado})
+                
+                elif tool == "redactar_respuesta":
+                    # Solo ejecutar al final del plan
+                    if paso == plan[-1]:
+                        break
+                    else:
+                        resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": "Pendiente"})
+                
+                elif tool == "razonar_y_decidir":
+                    # Validación intermedia
+                    val = razonador_tool.validar_limites_respuesta(informacion_acumulada)
+                    resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": val})
+            
+            # 6. Redactar respuesta final
+            respuesta_final = redactar_respuesta(informacion_acumulada, tipo="consulta_general")
+            
+            # 7. Validar guardrails
+            validacion = razonador_tool.validar_limites_respuesta(respuesta_final)
+            if not validacion.get("valida", True):
+                respuesta_final = validacion.get("respuesta_corregida", respuesta_final)
+            
+            # 8. Guardar en memorias
+            self._guardar_interaccion(consulta, respuesta_final)
+            
+            # Extraer fuentes de los resultados
+            fuentes = []
+            for r in resultados_pasos:
+                if r["tool"] == "consultar_documentos" and "Fuentes:" in r["resultado"]:
+                    partes = r["resultado"].split("Fuentes:")
+                    if len(partes) > 1:
+                        fuentes.append(partes[1].strip())
+            
             return {
-                "respuesta_final": respuesta_escalamiento,
-                "accion": "escalar",
+                "respuesta_final": respuesta_final,
+                "accion": "responder",
                 "metadata": {
                     "decision": decision,
-                    "pasos_ejecutados": ["clasificacion", "escalamiento"],
-                    "fuentes": []
+                    "plan": plan,
+                    "pasos_ejecutados": resultados_pasos,
+                    "fuentes": list(set(fuentes)),
+                    "validacion_guardrails": validacion
                 }
             }
         
-        # 4. Planificar tareas
-        plan = self.planificador.generar_plan(
-            consulta,
-            decision.get("intencion", "otro"),
-            contexto_memoria
-        )
+        except groq.RateLimitError:
+            return self._procesar_modo_rate_limit(consulta)
         
-        # 5. Ejecutar plan paso a paso
-        resultados_pasos = []
-        informacion_acumulada = ""
-        
-        for paso in plan:
-            tool = paso.get("tool", "")
-            accion = paso.get("accion", "")
-            
-            if tool == "consultar_documentos":
-                resultado = consultar_documentos(accion)
-                informacion_acumulada += f"\n{resultado}"
-                resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": resultado})
-            
-            elif tool == "redactar_respuesta":
-                # Solo ejecutar al final del plan
-                if paso == plan[-1]:
-                    break
-                else:
-                    resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": "Pendiente"})
-            
-            elif tool == "razonar_y_decidir":
-                # Validación intermedia
-                val = razonador_tool.validar_limites_respuesta(informacion_acumulada)
-                resultados_pasos.append({"paso": paso["paso"], "tool": tool, "resultado": val})
-        
-        # 6. Redactar respuesta final
-        respuesta_final = redactar_respuesta(informacion_acumulada, tipo="consulta_general")
-        
-        # 7. Validar guardrails
-        validacion = razonador_tool.validar_limites_respuesta(respuesta_final)
-        if not validacion.get("valida", True):
-            respuesta_final = validacion.get("respuesta_corregida", respuesta_final)
-        
-        # 8. Guardar en memorias
-        self._guardar_interaccion(consulta, respuesta_final)
-        
-        # Extraer fuentes de los resultados
-        fuentes = []
-        for r in resultados_pasos:
-            if r["tool"] == "consultar_documentos" and "Fuentes:" in r["resultado"]:
-                partes = r["resultado"].split("Fuentes:")
-                if len(partes) > 1:
-                    fuentes.append(partes[1].strip())
-        
-        return {
-            "respuesta_final": respuesta_final,
-            "accion": "responder",
-            "metadata": {
-                "decision": decision,
-                "plan": plan,
-                "pasos_ejecutados": resultados_pasos,
-                "fuentes": list(set(fuentes)),
-                "validacion_guardrails": validacion
+        except Exception as e:
+            return {
+                "respuesta_final": (
+                    f"[ERROR] El agente encontro un problema al procesar la consulta. "
+                    f"Detalle tecnico: {type(e).__name__}. "
+                    f"Verifique la conexion a internet y la validez de la API key."
+                ),
+                "accion": "error",
+                "metadata": {"error_tipo": type(e).__name__, "error_msg": str(e)}
             }
-        }
     
     def _guardar_interaccion(self, consulta: str, respuesta: str):
         """Guarda la interacción en ambas memorias."""
@@ -157,19 +173,49 @@ class AgenteCargaMax:
         Muestra el flujo y estructura sin consumir tokens."""
         return {
             "respuesta_final": (
-                "[MODO SIMULACIÓN] No se detectó GROQ_API_KEY.\n\n"
-                "Flujo que se ejecutaría:\n"
-                "1. Clasificación de intención y decisión de escalamiento.\n"
-                "2. Planificación de subtareas según complejidad.\n"
+                "[MODO SIMULACION] No se detecto GROQ_API_KEY.\n\n"
+                "Flujo que se ejecutaria:\n"
+                "1. Clasificacion de intencion y decision de escalamiento.\n"
+                "2. Planificacion de subtareas segun complejidad.\n"
                 "3. Consulta RAG sobre documentos de CargaMax.\n"
-                "4. Redacción de respuesta con guardrails.\n"
-                "5. Validación final y almacenamiento en memoria.\n\n"
+                "4. Redaccion de respuesta con guardrails.\n"
+                "5. Validacion final y almacenamiento en memoria.\n\n"
                 "Configure la variable de entorno GROQ_API_KEY para ejecutar con LLM real."
             ),
             "accion": "responder",
             "metadata": {
                 "modo": "simulacion",
                 "consulta_recibida": consulta
+            }
+        }
+    
+    def _procesar_modo_rate_limit(self, consulta: str) -> Dict:
+        """Modo fallback cuando se alcanza el limite de tokens de Groq.
+        Retorna una respuesta estructurada que muestra el flujo sin usar tokens."""
+        return {
+            "respuesta_final": (
+                "[LIMITE DE API ALCANZADO] Se ha superado el limite diario de tokens del tier gratuito de Groq.\n\n"
+                "Esto es normal en el tier gratuito (100.000 tokens/dia). El sistema esta funcionando correctamente; "
+                "simplemente se agotaron los tokens disponibles por hoy.\n\n"
+                "Para continuar probando el agente:\n"
+                "- Espere ~10 minutos para que se reinicie la cuota, o\n"
+                "- Cree una nueva API key en console.groq.com (gratuito), o\n"
+                "- Actualice a un tier de pago si necesita mas volumen.\n\n"
+                "Flujo que el agente habria ejecutado:\n"
+                "1. Clasificacion de intencion (informacional / cotizacion / reclamo / peligrosa)\n"
+                "2. Planificacion de pasos segun complejidad\n"
+                "3. Recuperacion de contexto de memoria (si aplica)\n"
+                "4. Consulta RAG sobre documentos de CargaMax\n"
+                "5. Redaccion de respuesta formal\n"
+                "6. Validacion de guardrails\n"
+                "7. Almacenamiento en memoria\n\n"
+                "Consulta recibida: '" + consulta + "'"
+            ),
+            "accion": "responder",
+            "metadata": {
+                "modo": "rate_limit",
+                "consulta_recibida": consulta,
+                "nota": "Limite de tokens diarios alcanzado. El agente funciona correctamente pero requiere mas tokens para generar respuestas con LLM."
             }
         }
 

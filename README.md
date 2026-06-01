@@ -30,20 +30,29 @@ GROQ_API_KEY=tu_clave_aqui
 
 ## Ejecucion
 
-Demo principal (4 consultas de ejemplo):
+### Modo interactivo (principal)
+
 ```bash
 python main.py
 ```
 
-Demos individuales:
+Escribe tu propia consulta y presiona Enter. El agente responde en tiempo real.
+
+Comandos disponibles:
+- `demo`  -> Ejecuta 4 consultas predefinidas de demostracion
+- `nuevo` -> Reinicia la memoria (simula un cliente nuevo)
+- `salir` -> Termina la sesion
+
+### Demos individuales (para evidencias de evaluacion)
+
 ```bash
-# Consulta simple vs compleja
+# Consulta simple vs compleja con RAG
 python tests/demo_consulta.py
 
 # Memoria corto y largo plazo
 python tests/demo_memoria.py
 
-# Decisiones adaptativas (5 escenarios)
+# Toma de decisiones adaptativas (5 escenarios)
 python tests/demo_decisiones.py
 ```
 

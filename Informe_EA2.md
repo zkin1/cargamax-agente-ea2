@@ -167,9 +167,9 @@ Simula una conversación de 5 turnos para probar la memoria de corto plazo, most
 
 Ejecuta los 5 escenarios descritos en la sección 4.2, imprimiendo para cada uno: la intención detectada, la complejidad, la decisión de escalamiento, el motivo y la respuesta final. Esto demuestra de forma directa que el agente ajusta su comportamiento ante distintas condiciones.
 
-### 6.4. Ejecución Principal (`main.py`)
+### 6.4. Ejecucion Principal (`main.py`)
 
-Ejecuta 4 consultas de demostración predefinidas que recorren los casos más representativos del flujo de trabajo, mostrando la respuesta, la acción tomada y la metadata completa de cada interacción.
+`main.py` funciona en **modo interactivo**: permite al usuario escribir consultas personalizadas y recibir respuestas del agente en tiempo real, demostrando el funcionamiento real del sistema. Incluye los comandos `demo` (ejecuta 4 consultas predefinidas), `nuevo` (reinicia la memoria) y `salir` (termina la sesion). Este modo interactivo evidencia que el agente responde a entradas arbitrarias del usuario, no solo a casos de prueba fijos.
 
 ## 7. Reflexión y Conclusiones
 
