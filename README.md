@@ -180,3 +180,5 @@ El agente implementa restricciones heredadas del diseño de la EP1:
 
 Proyecto académico desarrollado para el curso ISY0101 - Optativo Ingeniería de Soluciones con IA.
 
+#   c a r g a m a x - a g e n t e - e a 2  
+ 
